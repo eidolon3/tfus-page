@@ -164,21 +164,17 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
     if (width === 0 || height === 0) return
 
     const positions = [
-      { x: width * 0.22, y: height * 0.32 },
-      { x: width * 0.72, y: height * 0.24 },
-      { x: width * 0.38, y: height * 0.68 },
-      { x: width * 0.78, y: height * 0.62 },
-      { x: width * 0.50, y: height * 0.38 },
-      { x: width * 0.18, y: height * 0.65 },
+      { x: width * 0.24, y: height * 0.33 },
+      { x: width * 0.72, y: height * 0.26 },
+      { x: width * 0.32, y: height * 0.67 },
+      { x: width * 0.74, y: height * 0.64 },
     ]
 
     const categories = [
       { label: 'Organizations', path: '/organizations' },
       { label: 'Studies', path: '/studies' },
-      { label: 'Technology', path: '/technology' },
-      { label: 'Open Questions', path: '/misc' },
       { label: 'Timeline', path: '/timeline' },
-      { label: 'Active Trials', path: '/trials' },
+      { label: 'Trials', path: '/trials' },
     ]
 
     nodesRef.current = positions.map((pos, i) => ({
@@ -194,8 +190,6 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
 
     const connections: [number, number][] = [
       [0, 1], [1, 2], [2, 3], [0, 2], [1, 3], [0, 3],
-      [0, 4], [1, 4], [4, 2], [4, 3],
-      [0, 5], [5, 2], [5, 4],
     ]
 
     axonsRef.current = connections.map(([from, to]) => ({

@@ -26,7 +26,7 @@ export default function Landing() {
     navigate(path)
   }, [navigate])
 
-  const CATEGORIES = ['Organizations', 'Studies', 'Technology', 'Open Questions', 'Timeline', 'Active Trials']
+  const CATEGORIES = ['Organizations', 'Studies', 'Timeline', 'Trials']
 
   return (
     <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-[#0A0A0F]">

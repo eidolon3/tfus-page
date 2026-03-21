@@ -19,8 +19,8 @@ export default function PageWrapper({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pb-16"
-      style={{ paddingTop: '7rem' }}
+      className="min-h-screen pb-16 px-6 md:px-10 w-full"
+      style={{ paddingTop: '7rem', maxWidth: '90rem', marginLeft: 'auto', marginRight: 'auto' }}
     >
       {/* Page header */}
       <motion.div

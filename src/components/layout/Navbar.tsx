@@ -5,8 +5,6 @@ const navLinks = [
   { path: '/', label: 'Home' },
   { path: '/organizations', label: 'Ecosystem' },
   { path: '/studies', label: 'Studies' },
-  { path: '/technology', label: 'Technology' },
-  { path: '/misc', label: 'Open Questions' },
   { path: '/timeline', label: 'Timeline' },
   { path: '/trials', label: 'Trials' },
   { path: '/about', label: 'About' },
@@ -27,7 +25,8 @@ export default function Navbar() {
           : 'bg-[#0A0A0F]/80 backdrop-blur-xl border-b border-white/5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="w-full px-6 h-16 flex items-center justify-between"
+        style={{ maxWidth: '90rem', marginLeft: 'auto', marginRight: 'auto' }}>
         <Link
           to="/"
           className="font-mono text-sm tracking-widest text-[#BF40BF] hover:text-[#00FFFF] transition-colors"
