@@ -9,6 +9,7 @@ import Misc from './pages/Misc'
 import TimelinePage from './pages/TimelinePage'
 import About from './pages/About'
 import Trials from './pages/Trials'
+import TrialsDesigns from './pages/TrialsDesigns'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="trials" element={<Trials />} />
             <Route path="about" element={<About />} />
           </Route>
+          <Route path="/designs" element={<TrialsDesigns />} />
         </Routes>
       </AnimatePresence>
     </BrowserRouter>
