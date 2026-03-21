@@ -84,11 +84,6 @@ export default function StudyDrawer({ study, onClose }: StudyDrawerProps) {
                 </div>
                 <p className="text-sm text-white/80 leading-snug">
                   {study.firstAuthor} et al., {study.year}
-                  {study.significance != null && (
-                    <span className="ml-2 font-mono text-[9px] text-[#BF40BF]/60 border border-[#BF40BF]/20 rounded px-1 py-px">
-                      sig {study.significance}/10
-                    </span>
-                  )}
                 </p>
                 {study.doi && (
                   <a

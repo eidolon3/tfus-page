@@ -32,17 +32,17 @@ export default function Navbar() {
           to="/"
           className="font-mono text-sm tracking-widest text-[#BF40BF] hover:text-[#00FFFF] transition-colors"
         >
-          tFUS://
+          tFUS
         </Link>
 
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-2">
           {navLinks.map(({ path, label }) => {
             const isActive = location.pathname === path
             return (
               <Link
                 key={path}
                 to={path}
-                className={`relative px-3 py-1.5 text-xs font-mono tracking-wide transition-colors ${
+                className={`relative px-4 py-1.5 text-xs font-mono tracking-wide transition-colors ${
                   isActive
                     ? 'text-[#00FFFF]'
                     : 'text-white/50 hover:text-white/80'

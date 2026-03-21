@@ -19,7 +19,7 @@ export default function PageWrapper({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen pb-16 px-6 md:px-12 max-w-7xl mx-auto"
+      className="min-h-screen pb-16"
       style={{ paddingTop: '7rem' }}
     >
       {/* Page header */}
@@ -27,17 +27,17 @@ export default function PageWrapper({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="mb-12"
+        className="mb-14"
       >
         <div
-          className="h-px w-16 mb-6 opacity-50"
+          className="h-px w-16 mb-8 opacity-50"
           style={{ background: accentColor }}
         />
-        <h1 className="text-2xl md:text-3xl font-light text-white/90 mb-2">
+        <h1 className="text-2xl md:text-3xl font-light text-white/90 mb-3">
           {title}
         </h1>
         {subtitle && (
-          <p className="font-mono text-xs text-white/30 tracking-wide max-w-2xl">
+          <p className="font-mono text-xs text-white/30 tracking-wide max-w-2xl mt-1">
             {subtitle}
           </p>
         )}
