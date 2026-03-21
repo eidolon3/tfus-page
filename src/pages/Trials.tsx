@@ -1,33 +1,23 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useMemo } from 'react'
 import PageWrapper from '../components/ui/PageWrapper'
 import { trials, type Trial, type TrialCondition } from '../data/trials'
 
-// ── Colour mappings ────────────────────────────────────────────────────────────
-const conditionColor: Record<TrialCondition, string> = {
-  depression: 'text-[#BF40BF] border-[#BF40BF]/30 bg-[#BF40BF]/5',
-  anxiety:    'text-purple-400 border-purple-400/30 bg-purple-400/5',
-  pain:       'text-amber-400 border-amber-400/30 bg-amber-400/5',
-  motor:      'text-[#00FFFF] border-[#00FFFF]/30 bg-[#00FFFF]/5',
-  cognition:  'text-emerald-400 border-emerald-400/30 bg-emerald-400/5',
-  other:      'text-white/40 border-white/20 bg-white/5',
+// ── Colours ────────────────────────────────────────────────────────────────────
+const COND_COLOR: Record<TrialCondition, string> = {
+  depression: '#BF40BF',
+  anxiety:    '#a78bfa',
+  pain:       '#fb923c',
+  motor:      '#00FFFF',
+  cognition:  '#34d399',
+  other:      '#94a3b8',
 }
 
-const conditionDot: Record<TrialCondition, string> = {
-  depression: 'bg-[#BF40BF]',
-  anxiety:    'bg-purple-400',
-  pain:       'bg-amber-400',
-  motor:      'bg-[#00FFFF]',
-  cognition:  'bg-emerald-400',
-  other:      'bg-white/40',
-}
-
-const statusConfig: Record<string, { label: string; dot: string; text: string }> = {
-  recruiting:  { label: 'Recruiting',       dot: 'bg-emerald-400 shadow-[0_0_6px_#34d399]', text: 'text-emerald-400' },
-  active:      { label: 'Active',           dot: 'bg-amber-400',                            text: 'text-amber-400' },
-  completed:   { label: 'Completed',        dot: 'bg-white/30',                             text: 'text-white/40' },
-  not_yet:     { label: 'Not Yet Open',     dot: 'bg-blue-400/60',                          text: 'text-blue-400/60' },
-}
+const STATUS_CFG = {
+  recruiting: { label: 'Recruiting', color: '#f97316', glow: '0 0 8px #f9731660' },
+  active:     { label: 'Active',     color: '#22c55e', glow: '0 0 8px #22c55e60' },
+  completed:  { label: 'Completed',  color: '#475569', glow: 'none' },
+  not_yet:    { label: 'Not Yet',    color: '#334155', glow: 'none' },
+} as const
 
 const FILTERS: { key: TrialCondition | 'all'; label: string }[] = [
   { key: 'all',        label: 'All' },
@@ -39,253 +29,300 @@ const FILTERS: { key: TrialCondition | 'all'; label: string }[] = [
   { key: 'other',      label: 'Other' },
 ]
 
-// ── Timeline ───────────────────────────────────────────────────────────────────
-function TrialsTimeline({ filtered }: { filtered: Trial[] }) {
-  const [hovered, setHovered] = useState<string | null>(null)
+type SortKey = 'year' | 'condition' | 'status' | 'pi' | 'institution'
+type SortDir = 'asc' | 'desc'
 
-  const MIN_YEAR = 2013
-  const MAX_YEAR = 2025
-  const SPAN = MAX_YEAR - MIN_YEAR
+const STATUS_ORDER = { recruiting: 0, active: 1, not_yet: 2, completed: 3 }
+const COND_ORDER: Record<TrialCondition, number> = {
+  depression: 0, anxiety: 1, pain: 2, motor: 3, cognition: 4, other: 5,
+}
 
-  // Group by year
-  const byYear: Record<number, Trial[]> = {}
-  for (const t of filtered) {
-    if (!byYear[t.year]) byYear[t.year] = []
-    byYear[t.year].push(t)
-  }
+// ── Year density strip ─────────────────────────────────────────────────────────
+function DensityStrip({ filtered }: { filtered: Trial[] }) {
+  const years = Array.from({ length: 13 }, (_, i) => 2014 + i)
+  const maxCount = Math.max(...years.map(y => filtered.filter(t => t.year === y).length), 1)
 
   return (
-    <div className="mb-16">
-      <div className="flex items-center gap-3 mb-6">
-        <span className="font-mono text-[9px] tracking-widest text-white/20 uppercase">Timeline</span>
-        <div className="flex-1 h-px bg-white/5" />
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-4 mb-8">
-        {FILTERS.filter(f => f.key !== 'all').map(f => (
-          <div key={f.key} className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-full ${conditionDot[f.key as TrialCondition]}`} />
-            <span className="font-mono text-[9px] text-white/30">{f.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Timeline track */}
-      <div className="relative px-4 pb-8">
-        {/* Axis line */}
-        <div className="absolute left-4 right-4 top-6 h-px bg-white/10" />
-
-        {/* Year labels */}
-        <div className="relative h-4 mb-4">
-          {Array.from({ length: SPAN + 1 }, (_, i) => MIN_YEAR + i).filter(y => y % 2 === 1 || y === MIN_YEAR || y === MAX_YEAR).map(year => (
-            <div
-              key={year}
-              className="absolute transform -translate-x-1/2"
-              style={{ left: `${((year - MIN_YEAR) / SPAN) * 100}%` }}
-            >
-              <span className="font-mono text-[8px] text-white/20">{year}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Dots */}
-        <div className="relative h-24">
-          {filtered.map((trial) => {
-            const x = ((trial.year - MIN_YEAR) / SPAN) * 100
-            const sc = statusConfig[trial.status]
-            const isHov = hovered === trial.nct
-
-            return (
+    <div className="flex items-end gap-1 h-10 mb-1">
+      {years.map(y => {
+        const cnt = filtered.filter(t => t.year === y).length
+        const h = cnt > 0 ? Math.max((cnt / maxCount) * 36, 4) : 0
+        // dominant condition
+        const ts = filtered.filter(t => t.year === y)
+        const dom = ts.length
+          ? (Object.entries(
+              ts.reduce((acc, t) => { acc[t.condition] = (acc[t.condition] || 0) + 1; return acc }, {} as Record<string, number>)
+            ).sort((a, b) => b[1] - a[1])[0][0] as TrialCondition)
+          : 'other'
+        return (
+          <div key={y} className="flex flex-col items-center gap-0.5">
+            {cnt > 0 && (
               <div
-                key={trial.nct}
-                className="absolute transform -translate-x-1/2 cursor-pointer group"
-                style={{ left: `${x}%`, top: '0%' }}
-                onMouseEnter={() => setHovered(trial.nct)}
-                onMouseLeave={() => setHovered(null)}
-              >
-                <div className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${conditionDot[trial.condition]} ${isHov ? 'scale-150 ring-2 ring-white/20' : 'opacity-70 hover:opacity-100'}`} />
-
-                {/* Hover card */}
-                {isHov && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-52 z-20 pointer-events-none"
-                  >
-                    <div className="bg-[#0E0E16] border border-white/10 rounded-lg p-3 shadow-2xl">
-                      <div className="font-mono text-[8px] text-white/30 mb-1">{trial.nct}</div>
-                      <div className={`font-mono text-[9px] border rounded px-1.5 py-px inline-block mb-2 ${conditionColor[trial.condition]}`}>
-                        {trial.conditionLabel}
-                      </div>
-                      <div className="text-[10px] text-white/70 leading-snug mb-2">{trial.target}</div>
-                      <div className="flex items-center gap-1.5">
-                        <div className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
-                        <span className={`font-mono text-[8px] ${sc.text}`}>{sc.label}</span>
-                      </div>
-                      <div className="font-mono text-[8px] text-white/20 mt-1">{trial.institution}</div>
-                    </div>
-                    <div className="w-px h-2 bg-white/10 mx-auto" />
-                  </motion.div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Density bars */}
-        <div className="relative h-8 mt-2">
-          {Object.entries(byYear).map(([year, ts]) => (
-            <div
-              key={year}
-              className="absolute bottom-0 transform -translate-x-1/2 flex flex-col-reverse gap-px"
-              style={{ left: `${((Number(year) - MIN_YEAR) / SPAN) * 100}%` }}
-            >
-              {ts.map((t, i) => (
-                <div key={i} className={`w-1.5 h-1.5 rounded-sm opacity-40 ${conditionDot[t.condition]}`} />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+                style={{
+                  width: 22,
+                  height: h,
+                  background: COND_COLOR[dom] + '50',
+                  borderTop: `2px solid ${COND_COLOR[dom]}`,
+                  borderRadius: '2px 2px 0 0',
+                }}
+              />
+            )}
+            <span className="font-mono text-[8px] text-white/15">{y}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
 
-// ── Trial Card ─────────────────────────────────────────────────────────────────
-function TrialCard({ trial }: { trial: Trial }) {
-  const sc = statusConfig[trial.status]
-  const cc = conditionColor[trial.condition]
+// ── Sort header button ─────────────────────────────────────────────────────────
+function SortBtn({
+  label, col, sortKey, sortDir, onSort,
+}: { label: string; col: SortKey; sortKey: SortKey; sortDir: SortDir; onSort: (c: SortKey) => void }) {
+  const active = sortKey === col
+  return (
+    <button
+      onClick={() => onSort(col)}
+      className={`font-mono text-[9px] tracking-widest uppercase flex items-center gap-1 transition-colors ${
+        active ? 'text-[#BF40BF]' : 'text-white/25 hover:text-white/50'
+      }`}
+    >
+      {label}
+      <span className="text-[8px]">{active ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}</span>
+    </button>
+  )
+}
+
+// ── Trial row ──────────────────────────────────────────────────────────────────
+function TrialRow({ trial }: { trial: Trial }) {
+  const sc = STATUS_CFG[trial.status]
+  const cc = COND_COLOR[trial.condition]
 
   return (
-    <motion.a
+    <a
       href={trial.url}
       target="_blank"
       rel="noopener noreferrer"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="block bg-[#0E0E16] border border-white/[0.06] rounded-xl p-5 hover:border-white/15 hover:bg-[#111119] transition-all duration-200 group"
+      className="group flex items-start gap-4 px-4 py-3.5 border-b border-white/[0.04] hover:bg-white/[0.025] transition-colors cursor-pointer"
     >
-      {/* Header row */}
-      <div className="flex items-start justify-between mb-3">
-        <span className="font-mono text-[9px] text-white/25 tracking-wider">{trial.nct}</span>
-        <div className="flex items-center gap-1.5">
-          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${sc.dot}`} />
-          <span className={`font-mono text-[8px] ${sc.text}`}>{sc.label}</span>
+      {/* Left accent */}
+      <div className="w-[3px] self-stretch rounded-full flex-shrink-0 mt-0.5" style={{ background: cc }} />
+
+      {/* Year + status */}
+      <div className="w-14 flex-shrink-0">
+        <div className="font-mono text-sm font-bold text-white/80">{trial.year}</div>
+        <div className="flex items-center gap-1 mt-0.5">
+          <div
+            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+            style={{ background: sc.color, boxShadow: sc.glow }}
+          />
+          <span className="font-mono text-[8px]" style={{ color: sc.color }}>{sc.label}</span>
         </div>
       </div>
 
-      {/* Condition badge */}
-      <div className={`font-mono text-[9px] border rounded px-1.5 py-px inline-block mb-3 ${cc}`}>
-        {trial.conditionLabel}
-      </div>
-
-      {/* Target */}
-      <div className="text-[13px] text-white/80 font-medium mb-1 leading-snug group-hover:text-white transition-colors">
-        {trial.target}
-      </div>
-      <div className="text-[11px] text-white/35 leading-snug mb-4 line-clamp-2">{trial.title}</div>
-
-      {/* Params row */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      {/* Condition — most prominent */}
+      <div className="w-36 flex-shrink-0">
+        <div
+          className="font-mono text-[11px] font-semibold"
+          style={{ color: cc }}
+        >
+          {trial.conditionLabel}
+        </div>
         {trial.frequency_kHz && (
-          <span className="font-mono text-[9px] text-white/30 bg-white/5 rounded px-1.5 py-px">
-            {trial.frequency_kHz} kHz
-          </span>
+          <div className="font-mono text-[8px] text-white/20 mt-0.5">{trial.frequency_kHz} kHz</div>
         )}
-        <span className="font-mono text-[9px] text-white/30 bg-white/5 rounded px-1.5 py-px">
-          {trial.phase}
-        </span>
-        <span className="font-mono text-[9px] text-white/30 bg-white/5 rounded px-1.5 py-px">
-          {trial.year}
-        </span>
       </div>
 
-      {/* Footer */}
-      <div className="pt-3 border-t border-white/[0.05]">
-        <div className="text-[10px] text-white/40">{trial.institution}</div>
-        <div className="text-[10px] text-[#BF40BF]/50 mt-0.5">{trial.pi}</div>
+      {/* Title + target */}
+      <div className="flex-1 min-w-0">
+        <div className="text-[12px] text-white/60 leading-snug line-clamp-2 group-hover:text-white/80 transition-colors">
+          {trial.title}
+        </div>
+        <div className="font-mono text-[9px] text-white/30 mt-1">{trial.target}</div>
       </div>
 
-      <div className="mt-3 font-mono text-[9px] text-[#00FFFF]/30 group-hover:text-[#00FFFF]/60 transition-colors">
-        [clinicaltrials.gov ↗]
+      {/* PI + institution */}
+      <div className="w-44 flex-shrink-0 hidden lg:block">
+        <div className="text-[10px] text-[#BF40BF]/60">{trial.pi !== 'Unknown' ? trial.pi : ''}</div>
+        <div className="text-[10px] text-white/25 mt-0.5 leading-tight">{trial.institution}</div>
       </div>
-    </motion.a>
+
+      {/* Phase */}
+      <div className="w-16 flex-shrink-0 hidden xl:block">
+        <span className="font-mono text-[8px] text-white/20">{trial.phase || '—'}</span>
+      </div>
+
+      {/* Arrow */}
+      <div className="font-mono text-[9px] text-white/10 group-hover:text-[#00FFFF]/40 transition-colors flex-shrink-0 self-center">↗</div>
+    </a>
   )
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function Trials() {
-  const [filter, setFilter] = useState<TrialCondition | 'all'>('all')
-
-  const filtered = filter === 'all' ? trials : trials.filter(t => t.condition === filter)
+  const [filter, setFilter]   = useState<TrialCondition | 'all'>('all')
+  const [search, setSearch]   = useState('')
+  const [sortKey, setSortKey] = useState<SortKey>('year')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   const counts = {
     recruiting: trials.filter(t => t.status === 'recruiting').length,
     active:     trials.filter(t => t.status === 'active').length,
     completed:  trials.filter(t => t.status === 'completed').length,
+    total:      trials.length,
   }
+
+  const handleSort = (col: SortKey) => {
+    if (sortKey === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortKey(col); setSortDir('asc') }
+  }
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    let out = trials.filter(t => {
+      if (filter !== 'all' && t.condition !== filter) return false
+      if (!q) return true
+      return (
+        t.title.toLowerCase().includes(q) ||
+        t.conditionLabel.toLowerCase().includes(q) ||
+        t.target.toLowerCase().includes(q) ||
+        t.pi.toLowerCase().includes(q) ||
+        t.institution.toLowerCase().includes(q) ||
+        t.nct.toLowerCase().includes(q)
+      )
+    })
+    out = [...out].sort((a, b) => {
+      let cmp = 0
+      if (sortKey === 'year')        cmp = a.year - b.year
+      else if (sortKey === 'condition') cmp = COND_ORDER[a.condition] - COND_ORDER[b.condition]
+      else if (sortKey === 'status') cmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
+      else if (sortKey === 'pi')     cmp = a.pi.localeCompare(b.pi)
+      else if (sortKey === 'institution') cmp = a.institution.localeCompare(b.institution)
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+    return out
+  }, [filter, search, sortKey, sortDir])
 
   return (
     <PageWrapper
-      title="Active Trials"
-      subtitle="Registered clinical trials investigating transcranial focused ultrasound neuromodulation."
-      accentColor="#00FFFF"
+      title="Trials"
+      subtitle="Registered clinical trials investigating tFUS / LIFU neuromodulation."
+      accentColor="#BF40BF"
     >
-      {/* Status summary row */}
-      <div className="flex gap-6 mb-12">
-        {[
-          { label: 'Recruiting',  count: counts.recruiting, dot: 'bg-emerald-400 shadow-[0_0_6px_#34d399]', text: 'text-emerald-400' },
-          { label: 'Active',      count: counts.active,     dot: 'bg-amber-400',   text: 'text-amber-400' },
-          { label: 'Completed',   count: counts.completed,  dot: 'bg-white/30',    text: 'text-white/30' },
-        ].map(s => (
-          <div key={s.label} className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${s.dot}`} />
-            <span className={`font-mono text-[10px] ${s.text}`}>{s.count} {s.label}</span>
+      {/* ── Hero counts ── */}
+      <div className="flex flex-wrap gap-10 items-end mb-8">
+        <div>
+          <div className="font-mono text-5xl font-black leading-none" style={{ color: '#f97316', textShadow: '0 0 40px #f9731640' }}>
+            {counts.recruiting}
           </div>
-        ))}
+          <div className="font-mono text-[9px] text-white/30 tracking-widest uppercase mt-1">Recruiting</div>
+        </div>
+        <div>
+          <div className="font-mono text-5xl font-black leading-none" style={{ color: '#22c55e', textShadow: '0 0 40px #22c55e40' }}>
+            {counts.active}
+          </div>
+          <div className="font-mono text-[9px] text-white/30 tracking-widest uppercase mt-1">Active</div>
+        </div>
+        <div>
+          <div className="font-mono text-5xl font-black leading-none text-white/20">
+            {counts.completed}
+          </div>
+          <div className="font-mono text-[9px] text-white/20 tracking-widest uppercase mt-1">Completed</div>
+        </div>
+        <div className="ml-auto">
+          <div className="font-mono text-5xl font-black leading-none text-white/80">
+            {counts.total}
+          </div>
+          <div className="font-mono text-[9px] text-white/20 tracking-widest uppercase mt-1">Total Trials</div>
+        </div>
       </div>
 
-      {/* Timeline */}
-      <TrialsTimeline filtered={filtered} />
+      {/* ── Density strip ── */}
+      <DensityStrip filtered={filtered} />
 
-      {/* Filter tabs */}
-      <div className="flex flex-wrap gap-1 mb-8">
-        {FILTERS.map(f => {
-          const count = f.key === 'all' ? trials.length : trials.filter(t => t.condition === f.key).length
-          return (
+      {/* ── Filter + search row ── */}
+      <div className="flex flex-wrap items-center gap-2 mt-6 mb-0">
+        <div className="flex flex-wrap gap-1">
+          {FILTERS.map(f => {
+            const cnt = f.key === 'all' ? trials.length : trials.filter(t => t.condition === f.key).length
+            const active = filter === f.key
+            return (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className="font-mono text-[9px] px-3 py-1 rounded border transition-all"
+                style={{
+                  borderColor: active ? '#BF40BF60' : 'rgba(255,255,255,0.08)',
+                  color: active ? '#BF40BF' : 'rgba(255,255,255,0.35)',
+                  background: active ? '#BF40BF12' : 'transparent',
+                }}
+              >
+                {f.label} <span style={{ opacity: 0.4 }}>{cnt}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Search */}
+        <div className="ml-auto relative">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search trials..."
+            className="font-mono text-[10px] bg-white/[0.03] border border-white/10 rounded px-3 py-1.5 text-white/70 placeholder-white/20 outline-none focus:border-[#BF40BF]/40 transition-colors w-52"
+          />
+          {search && (
             <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`font-mono text-[10px] px-3 py-1.5 rounded border transition-all ${
-                filter === f.key
-                  ? 'border-[#00FFFF]/40 text-[#00FFFF] bg-[#00FFFF]/5'
-                  : 'border-white/10 text-white/40 hover:border-white/20 hover:text-white/60'
-              }`}
+              onClick={() => setSearch('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[10px] text-white/20 hover:text-white/50"
             >
-              {f.label} <span className="opacity-40 ml-1">{count}</span>
+              ×
             </button>
-          )
-        })}
+          )}
+        </div>
       </div>
 
-      {/* Cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((trial, i) => (
-          <motion.div
-            key={trial.nct}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04 }}
-          >
-            <TrialCard trial={trial} />
-          </motion.div>
-        ))}
+      {/* ── Table ── */}
+      <div className="mt-4 border border-white/[0.06] rounded-lg overflow-hidden">
+        {/* Column headers */}
+        <div className="flex items-center gap-4 px-4 py-2.5 border-b border-white/[0.06] bg-white/[0.02]">
+          <div className="w-[3px] flex-shrink-0" />
+          <div className="w-14 flex-shrink-0">
+            <SortBtn label="Year" col="year" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+          </div>
+          <div className="w-36 flex-shrink-0">
+            <SortBtn label="Condition" col="condition" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+          </div>
+          <div className="flex-1">
+            <span className="font-mono text-[9px] tracking-widest uppercase text-white/25">Trial / Target</span>
+          </div>
+          <div className="w-44 flex-shrink-0 hidden lg:block">
+            <SortBtn label="PI / Institution" col="pi" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+          </div>
+          <div className="w-16 flex-shrink-0 hidden xl:block">
+            <span className="font-mono text-[9px] tracking-widest uppercase text-white/25">Phase</span>
+          </div>
+          <div className="w-4 flex-shrink-0" />
+        </div>
+
+        {/* Rows */}
+        {filtered.length === 0 ? (
+          <div className="px-6 py-12 text-center font-mono text-[11px] text-white/20">
+            No trials match your search.
+          </div>
+        ) : (
+          filtered.map(t => <TrialRow key={t.nct} trial={t} />)
+        )}
+      </div>
+
+      {/* Result count */}
+      <div className="mt-3 font-mono text-[9px] text-white/15">
+        {filtered.length} of {trials.length} trials
       </div>
 
       {/* Disclaimer */}
-      <p className="mt-12 font-mono text-[9px] text-white/15 leading-relaxed">
-        Trial data is manually curated from ClinicalTrials.gov. NCT numbers and status should be verified directly.
+      <p className="mt-10 font-mono text-[9px] text-white/10 leading-relaxed">
+        Data sourced from ClinicalTrials.gov. NCT numbers and statuses should be verified directly.
         Last updated March 2026.
       </p>
     </PageWrapper>
