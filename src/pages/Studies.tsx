@@ -5,14 +5,6 @@ import StudyDrawer from '../components/ui/StudyDrawer'
 import { studies } from '../data/studies'
 import type { Study } from '../data/studies'
 
-const studyTypeColor: Record<string, string> = {
-  human: 'text-[#00FFFF] border-[#00FFFF]/30',
-  animal: 'text-emerald-400 border-emerald-400/30',
-  'in vitro': 'text-orange-400 border-orange-400/30',
-  review: 'text-white/30 border-white/10',
-  computational: 'text-purple-400 border-purple-400/30',
-}
-
 const speciesColor = (species: string) => {
   const s = species?.toLowerCase()
   if (s === 'human') return 'text-[#00FFFF]'
