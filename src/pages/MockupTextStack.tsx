@@ -42,7 +42,7 @@ export default function MockupTextStack() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.3 + i * 0.25, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => navigate(n.path)}
-                className="font-mono text-[19px] tracking-[0.35em] uppercase transition-colors duration-300"
+                className="font-mono text-[24px] tracking-[0.35em] uppercase transition-colors duration-300"
                 style={{ color: 'rgba(255,255,255,0.45)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#BF40BF')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}

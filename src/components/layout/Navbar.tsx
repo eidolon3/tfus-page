@@ -41,7 +41,7 @@ export default function Navbar() {
               <Link
                 key={path}
                 to={path}
-                className={`relative px-4 py-1.5 text-xs font-mono tracking-wide transition-colors ${
+                className={`relative px-3 py-1.5 text-xs font-mono tracking-wide transition-colors ${
                   isActive
                     ? 'text-[#00FFFF]'
                     : 'text-white/50 hover:text-white/80'
