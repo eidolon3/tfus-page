@@ -9,6 +9,7 @@ const COND_COLOR: Record<TrialCondition, string> = {
   pain:       '#fb923c',
   motor:      '#00FFFF',
   cognition:  '#34d399',
+  addiction:  '#f59e0b',
   other:      '#94a3b8',
 }
 
@@ -26,6 +27,7 @@ const FILTERS: { key: TrialCondition | 'all'; label: string }[] = [
   { key: 'motor',      label: 'Motor' },
   { key: 'cognition',  label: 'Cognition' },
   { key: 'anxiety',    label: 'Anxiety' },
+  { key: 'addiction',  label: 'Addiction' },
   { key: 'other',      label: 'Other' },
 ]
 
@@ -34,7 +36,7 @@ type SortDir = 'asc' | 'desc'
 
 const STATUS_ORDER = { recruiting: 0, active: 1, not_yet: 2, completed: 3 }
 const COND_ORDER: Record<TrialCondition, number> = {
-  depression: 0, anxiety: 1, pain: 2, motor: 3, cognition: 4, other: 5,
+  depression: 0, anxiety: 1, pain: 2, motor: 3, cognition: 4, addiction: 5, other: 6,
 }
 
 // ── Density hero ───────────────────────────────────────────────────────────────
@@ -43,10 +45,11 @@ function barColor(t: number): string {
   const r = Math.round(191 * (1 - t))
   const g = Math.round(64  + 191 * t)
   const b = Math.round(191 +  64 * t)
-  return `rgb(${r},${g},${b})`
+  const hex = (n: number) => n.toString(16).padStart(2, '0')
+  return `#${hex(r)}${hex(g)}${hex(b)}`
 }
 
-function DensityHero({ filtered }: { filtered: Trial[] }) {
+function DensityHero({ filtered, filter }: { filtered: Trial[]; filter: TrialCondition | 'all' }) {
   const allYears = Array.from(new Set(trials.map(t => t.year))).sort()
   const maxCount = Math.max(...allYears.map(y => filtered.filter(t => t.year === y).length), 1)
 
@@ -57,8 +60,7 @@ function DensityHero({ filtered }: { filtered: Trial[] }) {
         {allYears.map((y, i) => {
           const cnt = filtered.filter(t => t.year === y).length
           const barH = cnt > 0 ? Math.max((cnt / maxCount) * 108, 8) : 2
-          const t = i / Math.max(allYears.length - 1, 1)
-          const color = barColor(t)
+          const color = filter !== 'all' ? COND_COLOR[filter] : barColor(i / Math.max(allYears.length - 1, 1))
           return (
             <div key={y} className="flex flex-col items-center justify-end" style={{ flex: 1, height: 120 }}>
               <div
@@ -203,7 +205,7 @@ export default function Trials() {
       subtitle="Registered clinical trials investigating tFUS / LIFU neuromodulation."
       accentColor="#BF40BF"
     >
-      <DensityHero filtered={filtered} />
+      <DensityHero key={filter} filtered={filtered} filter={filter} />
 
       {/* ── Status counts ── */}
       <div className="flex flex-wrap gap-10 items-end mb-10">

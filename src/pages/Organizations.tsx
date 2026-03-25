@@ -1,113 +1,47 @@
 import PageWrapper from '../components/ui/PageWrapper'
-import DataTable from '../components/ui/DataTable'
-import { organizations, companies } from '../data/organizations'
+import { companies } from '../data/organizations'
 
 const stageColor: Record<string, string> = {
-  clinical:     'text-[#00FFFF] border-[#00FFFF]/30',
-  'pre-clinical': 'text-emerald-400 border-emerald-400/30',
-  consumer:     'text-orange-400 border-orange-400/30',
-  research:     'text-purple-400 border-purple-400/30',
+  clinical:       'text-[#00FFFF] border-[#00FFFF]/30 bg-[#00FFFF]/5',
+  'pre-clinical': 'text-emerald-400 border-emerald-400/30 bg-emerald-400/5',
+  consumer:       'text-orange-400 border-orange-400/30 bg-orange-400/5',
+  research:       'text-purple-400 border-purple-400/30 bg-purple-400/5',
 }
-
-const labColumns = [
-  {
-    key: 'name' as const,
-    header: 'Lab / Group',
-    render: (val: unknown) => (
-      <span className="text-white/90 font-medium">{String(val)}</span>
-    ),
-  },
-  {
-    key: 'pi' as const,
-    header: 'PI',
-    render: (val: unknown) => (
-      <span className="text-[#BF40BF]/80">{String(val)}</span>
-    ),
-  },
-  { key: 'institution' as const, header: 'Institution' },
-  { key: 'country' as const, header: 'Country', width: 'w-24' },
-  { key: 'focusArea' as const, header: 'Focus Area' },
-  {
-    key: 'website' as const,
-    header: 'Link',
-    sortable: false,
-    render: (val: unknown) => (
-      <a
-        href={String(val)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[#00FFFF]/50 hover:text-[#00FFFF] transition-colors font-mono text-[10px]"
-      >
-        [visit]
-      </a>
-    ),
-  },
-]
-
-const companyColumns = [
-  {
-    key: 'name' as const,
-    header: 'Company',
-    render: (val: unknown) => (
-      <span className="text-white/90 font-medium">{String(val)}</span>
-    ),
-  },
-  {
-    key: 'founderCeo' as const,
-    header: 'Founder / CEO',
-    render: (val: unknown) => (
-      <span className="text-[#BF40BF]/80">{String(val)}</span>
-    ),
-  },
-  { key: 'focus' as const, header: 'Product' },
-  {
-    key: 'stage' as const,
-    header: 'Stage',
-    render: (val: unknown) => (
-      <span className={`font-mono text-[9px] border rounded px-1.5 py-px ${stageColor[String(val)] || 'text-white/30 border-white/10'}`}>
-        {String(val)}
-      </span>
-    ),
-  },
-  { key: 'founded' as const, header: 'Founded', width: 'w-20' },
-  { key: 'raised' as const, header: 'Raised', width: 'w-24' },
-  {
-    key: 'website' as const,
-    header: 'Link',
-    sortable: false,
-    render: (val: unknown) => (
-      <a
-        href={String(val)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[#00FFFF]/50 hover:text-[#00FFFF] transition-colors font-mono text-[10px]"
-      >
-        [visit]
-      </a>
-    ),
-  },
-]
 
 export default function Organizations() {
   return (
     <PageWrapper
-      title="Ecosystem"
-      subtitle="Research groups and companies advancing transcranial focused ultrasound."
+      title="Industry"
+      subtitle="Companies building focused ultrasound products."
       accentColor="#BF40BF"
     >
-      <div className="space-y-16">
-        <DataTable
-          data={organizations}
-          columns={labColumns}
-          searchKeys={['name', 'institution', 'pi', 'focusArea', 'country']}
-          title="Research Groups"
-        />
-        <DataTable
-          data={companies}
-          columns={companyColumns}
-          searchKeys={['name', 'founderCeo', 'focus', 'stage']}
-          title="Companies"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {companies.map((c) => (
+          <a
+            key={c.name}
+            href={c.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block border border-white/[0.06] rounded-lg p-5 hover:border-white/15 transition-colors group"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-white/90 font-medium text-sm group-hover:text-white transition-colors">
+                {c.name}
+              </h3>
+              <span className={`font-mono text-[9px] border rounded px-1.5 py-px shrink-0 ml-3 ${stageColor[c.stage] || 'text-white/30 border-white/10'}`}>
+                {c.stage}
+              </span>
+            </div>
+            <p className="text-white/40 text-xs leading-relaxed mb-3">
+              {c.focus}
+            </p>
+            <div className="flex items-center gap-4 text-[10px] font-mono text-white/25">
+              <span>{c.founderCeo}</span>
+              <span className="text-white/10">|</span>
+              <span className="text-[#00FFFF]/40">{c.raised}</span>
+            </div>
+          </a>
+        ))}
       </div>
     </PageWrapper>
   )

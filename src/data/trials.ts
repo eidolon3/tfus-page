@@ -1,5 +1,5 @@
 export type TrialStatus = 'recruiting' | 'active' | 'completed' | 'not_yet'
-export type TrialCondition = 'depression' | 'pain' | 'motor' | 'cognition' | 'anxiety' | 'other'
+export type TrialCondition = 'depression' | 'pain' | 'motor' | 'cognition' | 'anxiety' | 'addiction' | 'other'
 
 export interface Trial {
   nct: string
@@ -162,7 +162,7 @@ export const trials: Trial[] = [
   {
     nct: 'NCT06894966',
     title: 'Towards a Targeted Ultrasound Neuromodulation Intervention for Alcohol Abuse Disorders',
-    condition: 'other',
+    condition: 'addiction',
     conditionLabel: 'Alcohol Use Disorder',
     status: 'not_yet',
     institution: 'University of Plymouth',
@@ -210,7 +210,7 @@ export const trials: Trial[] = [
   {
     nct: 'NCT06518785',
     title: 'Ultrasound Neuromodulation of the Brain for Alcohol Use Disorder',
-    condition: 'other',
+    condition: 'addiction',
     conditionLabel: 'Alcohol Use Disorder',
     status: 'recruiting',
     institution: 'University of California, San Francisco',
@@ -258,7 +258,7 @@ export const trials: Trial[] = [
   {
     nct: 'NCT06453109',
     title: 'Focused Ultrasound for the Complex Patient',
-    condition: 'anxiety',
+    condition: 'addiction',
     conditionLabel: 'Opioid Use Disorder',
     status: 'recruiting',
     institution: 'Washington D.C. Veterans Affairs Medical Center',
@@ -390,8 +390,8 @@ export const trials: Trial[] = [
   {
     nct: 'NCT06867224',
     title: 'Transcranial Ultrasound Stimulation as a Neuromodulation Therapy for Craving and Relapse Behaviors in Alcohol Use Disorder.',
-    condition: 'other',
-    conditionLabel: 'Alcohol Use Disorder (AUD)',
+    condition: 'addiction',
+    conditionLabel: 'Alcohol Use Disorder',
     status: 'active',
     institution: 'Shanghai Mental Health Center',
     n: 40,

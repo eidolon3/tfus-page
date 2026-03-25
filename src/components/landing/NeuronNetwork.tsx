@@ -171,10 +171,10 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
     ]
 
     const categories = [
-      { label: 'Organizations', path: '/organizations' },
-      { label: 'Studies', path: '/studies' },
-      { label: 'Timeline', path: '/timeline' },
-      { label: 'Trials', path: '/trials' },
+      { label: 'Foundations',    path: '/papers'        },
+      { label: 'Studies',       path: '/studies'       },
+      { label: 'Trials',        path: '/trials'        },
+      { label: 'Industry',      path: '/industry'      },
     ]
 
     nodesRef.current = positions.map((pos, i) => ({
@@ -196,11 +196,10 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
       from,
       to,
       controlPoints: generateAxonPath(nodesRef.current[from], nodesRef.current[to]),
-      // Single AP per axon, fast, with staggered cooldowns
       pulse: {
-        progress: -1, // -1 = waiting
-        speed: 0.8 + Math.random() * 0.4, // fast
-        cooldown: 2 + Math.random() * 5, // seconds between firings
+        progress: -1,
+        speed: 0.8 + Math.random() * 0.4,
+        cooldown: 2 + Math.random() * 5,
         active: false,
       },
     }))
@@ -296,7 +295,7 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
         ctx.moveTo(fromNode.x, fromNode.y)
         ctx.bezierCurveTo(cp[0].x, cp[0].y, cp[1].x, cp[1].y, toNode.x, toNode.y)
         ctx.strokeStyle = `rgba(90, 50, 140, ${baseAlpha})`
-        ctx.lineWidth = isActiveAxon ? 2.5 : 1.5
+        ctx.lineWidth = isActiveAxon ? 5 : 3.5
         ctx.stroke()
 
         // Myelin sheath (dashed overlay)
@@ -305,7 +304,7 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
         ctx.bezierCurveTo(cp[0].x, cp[0].y, cp[1].x, cp[1].y, toNode.x, toNode.y)
         ctx.setLineDash([8, 12])
         ctx.strokeStyle = `rgba(120, 70, 180, ${baseAlpha * 0.6})`
-        ctx.lineWidth = isActiveAxon ? 4 : 2.5
+        ctx.lineWidth = isActiveAxon ? 7.5 : 5.5
         ctx.lineDashOffset = -time * 15
         ctx.stroke()
         ctx.setLineDash([])
@@ -357,9 +356,9 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
 
               // Glow
               const grd = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, size * 2.5)
-              grd.addColorStop(0, `rgba(0, 255, 255, ${alpha * 0.5})`)
-              grd.addColorStop(0.5, `rgba(100, 180, 255, ${alpha * 0.2})`)
-              grd.addColorStop(1, 'rgba(0, 255, 255, 0)')
+              grd.addColorStop(0, `rgba(200, 120, 255, ${alpha * 0.5})`)
+              grd.addColorStop(0.5, `rgba(150, 70, 210, ${alpha * 0.2})`)
+              grd.addColorStop(1, 'rgba(120, 40, 180, 0)')
               ctx.fillStyle = grd
               ctx.beginPath()
               ctx.arc(pt.x, pt.y, size * 2.5, 0, Math.PI * 2)
@@ -368,7 +367,7 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
               // Core dot
               ctx.beginPath()
               ctx.arc(pt.x, pt.y, size * 0.4, 0, Math.PI * 2)
-              ctx.fillStyle = `rgba(180, 255, 255, ${alpha})`
+              ctx.fillStyle = `rgba(230, 180, 255, ${alpha})`
               ctx.fill()
             } else {
               // Hyperpolarization — subtle dark dip
@@ -384,7 +383,7 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
           if (pulse.progress > 1 + trailLength) {
             pulse.active = false
             pulse.progress = -1
-            pulse.cooldown = 3 + Math.random() * 6 // random wait before next fire
+            pulse.cooldown = 3 + Math.random() * 6
           }
         }
       })
@@ -441,14 +440,14 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
         })
 
         // ── Soma ──
-        const glowRadius = node.somaRadius * (isHovered ? 2.5 : 1.8) * pulse
+        const glowRadius = node.somaRadius * (isHovered ? 2.8 : 2.2) * pulse
         const glow = ctx.createRadialGradient(
           node.x, node.y, node.somaRadius * 0.5,
           node.x, node.y, glowRadius
         )
         glow.addColorStop(0, isHovered
-          ? 'rgba(191, 64, 191, 0.15)'
-          : 'rgba(100, 40, 140, 0.08)')
+          ? 'rgba(191, 64, 191, 0.20)'
+          : 'rgba(160, 50, 180, 0.14)')
         glow.addColorStop(1, 'rgba(100, 40, 140, 0)')
         ctx.fillStyle = glow
         ctx.beginPath()
@@ -476,13 +475,13 @@ export default function NeuronNetwork({ width, height, onNodeClick, onNodeHover 
           node.x, node.y, node.somaRadius
         )
         if (isHovered) {
-          somaGrad.addColorStop(0, 'rgba(200, 120, 240, 0.9)')
-          somaGrad.addColorStop(0.6, 'rgba(140, 50, 180, 0.8)')
-          somaGrad.addColorStop(1, 'rgba(80, 20, 120, 0.7)')
+          somaGrad.addColorStop(0, 'rgba(200, 120, 240, 0.95)')
+          somaGrad.addColorStop(0.6, 'rgba(140, 50, 180, 0.85)')
+          somaGrad.addColorStop(1, 'rgba(80, 20, 120, 0.75)')
         } else {
-          somaGrad.addColorStop(0, 'rgba(120, 60, 160, 0.7)')
-          somaGrad.addColorStop(0.6, 'rgba(80, 30, 120, 0.6)')
-          somaGrad.addColorStop(1, 'rgba(50, 15, 80, 0.5)')
+          somaGrad.addColorStop(0, 'rgba(170, 80, 210, 0.85)')
+          somaGrad.addColorStop(0.6, 'rgba(120, 45, 165, 0.75)')
+          somaGrad.addColorStop(1, 'rgba(70, 20, 110, 0.65)')
         }
         ctx.fillStyle = somaGrad
         ctx.fill()

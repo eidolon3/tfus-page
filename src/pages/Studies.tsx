@@ -151,7 +151,7 @@ export default function Studies() {
               <div className="mt-4 pl-4 border-l border-[#BF40BF]/20 space-y-3 max-w-2xl">
                 <p className="font-mono text-[11px] text-white/40 leading-relaxed">
                   <span className="text-white/60">01 — Study Collection.</span>{' '}
-                  I initially attempted to manually find every single LIFU trial on PubMed, but quickly realized that a truly exhaustive search would take far too long. I instead sourced studies from three systematic review articles — Kim et al. (2021)
+                  I sourced studies from three systematic review articles — Kim et al. (2021)
                   <Sup n={1} href="https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2021.620863/full" />,
                   {' '}Pellow et al. (2024)
                   <Sup n={2} href="https://www.brainstimjrnl.com/action/showPdf?pii=S1935-861X%2824%2900103-7" />,
@@ -161,19 +161,19 @@ export default function Studies() {
                   <Sup n={4} href="https://sarahconstantin.substack.com/p/all-the-latest-human-tfus-studies" />.
                   {' '}To cover the latest papers, I then manually scraped all studies on PubMed between 2024–2026 using the search term{' '}
                   <span className="text-white/55">"transcranial focused ultrasound"[Title] OR "low intensity focused ultrasound"[Title] OR tFUS[Title] OR LIFU[Title]</span>.
-                  {' '}After removing non-neuromodulation studies, duplicates, etc., the total came to 240 individual trials.
+                  {' '}After removing non-neuromodulation studies, duplicates, etc., the total count came to 232 individual trials. 16 additional trials from major groups (Kubanek, Sanguinetti, etc.) that slipped through the cracks were also added.
                 </p>
                 <p className="font-mono text-[11px] text-white/40 leading-relaxed">
                   <span className="text-white/60">02 — DOI Matching & PDF Acquisition.</span>{' '}
-                  Each study was matched to a DOI using Crossref's simple text query API. PDFs were retrieved via Zotero using institutional access (UIUC). Of the 240 studies, Zotero found PDFs for ~190; I manually sourced 47 more, giving access to 237/240 studies.
+                  I used Crossref's simple text query to match each study with a DOI. I then used Zotero along with my institutional access (UIUC) to download PDFs of each study. For the many studies Zotero could not automatically find, I manually hunted them down.
                 </p>
                 <p className="font-mono text-[11px] text-white/40 leading-relaxed">
                   <span className="text-white/60">03 — Parameter Extraction.</span>{' '}
-                  I wrote a script that loops through each study, extracts text from the PDF, and calls Gemini 2.5 Flash with a detailed prompt to extract parameters in JSON format. The prompt instructs the model to leave fields blank if not reported, and to convert values to standardized units where needed. Extracted parameters are appended to the CSV the table uses.
+                  I wrote a script that loops through each study, extracts the text from the PDF of that study, and makes an API call to Gemini 2.5 Flash with a detailed prompt to extract listed parameters in JSON format. Included in the prompt were instructions to leave parameters blank if they weren't included in the study, to convert certain parameters to standardized units if needed, and a guide on how to calculate certain parameters. Extracted parameters were appended to the CSV file that the table uses.
                 </p>
                 <p className="font-mono text-[11px] text-white/40 leading-relaxed">
                   <span className="text-white/60">04 — QA.</span>{' '}
-                  I randomly selected 8 papers plus two major studies (Legon 2014 and Legon 2018) and manually verified extracted parameters. I found 5 major errors across ~200 field checks, giving an estimated <span className="text-white/60">~2.5% error rate</span>.
+                  For QA, I randomly selected 8 random papers, with two manually chosen major papers (Legon 2014 and Legon 2018), and manually checked the correctness of the extracted parameters for those studies. I found 5 errors amongst ~200 field checks, giving an estimated <span className="text-white/60">~2.5% error rate</span>.
                 </p>
               </div>
             </motion.div>

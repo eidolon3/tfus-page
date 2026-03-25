@@ -12,8 +12,7 @@ export interface Company {
   founderCeo: string
   focus: string
   stage: 'clinical' | 'pre-clinical' | 'consumer' | 'research'
-  founded: string
-  raised: string
+raised: string
   website: string
 }
 
@@ -24,7 +23,7 @@ export const organizations: Organization[] = [
     country: 'USA',
     pi: 'Manbir Bhatt',
     focusArea: 'Low-intensity tFUS neuromodulation',
-    website: 'https://neuromodulation.usc.edu',
+    website: '',
   },
   {
     name: 'Tyler Lab',
@@ -36,11 +35,11 @@ export const organizations: Organization[] = [
   },
   {
     name: 'Legon Lab',
-    institution: 'University of Virginia',
+    institution: 'Virginia Tech / Fralin Biomedical Research Institute',
     country: 'USA',
     pi: 'Wynn Legon',
     focusArea: 'tFUS neuromodulation, somatosensory cortex',
-    website: 'https://www.legonlab.org',
+    website: 'https://fbri.vtc.vt.edu/research/labs/legon.html',
   },
   {
     name: 'Butts Pauly Lab',
@@ -48,7 +47,7 @@ export const organizations: Organization[] = [
     country: 'USA',
     pi: 'Kim Butts Pauly',
     focusArea: 'MR-guided FUS, neuromodulation',
-    website: 'https://med.stanford.edu/buptswpauly.html',
+    website: 'https://kbplab.stanford.edu',
   },
   {
     name: 'Shapiro Lab',
@@ -136,7 +135,7 @@ export const organizations: Organization[] = [
     country: 'USA',
     pi: 'Nathan McDannold',
     focusArea: 'BBB opening, drug delivery, thermal ablation',
-    website: 'https://www.bwh.harvard.edu',
+    website: 'https://fus.bwh.harvard.edu',
   },
   {
     name: 'Focused Ultrasound Foundation',
@@ -152,10 +151,9 @@ export const companies: Company[] = [
   {
     name: 'Openwater',
     founderCeo: 'Mary Lou Jepsen, Aaron Timm',
-    focus: 'Open-LIFU — portable open-source LIFU platform for depression and neurological disease',
+    focus: 'Open-LIFU portable open-source LIFU platform for depression and neurological disease',
     stage: 'clinical',
-    founded: '2016',
-    raised: '~$100M',
+    raised: '$100M',
     website: 'https://www.openwater.health',
   },
   {
@@ -163,7 +161,6 @@ export const companies: Company[] = [
     founderCeo: 'Fred Ehrsam, Jeremy Barenholtz',
     focus: 'Whole-brain ultrasound headset for imaging and stimulation',
     stage: 'pre-clinical',
-    founded: '2024',
     raised: '$100M',
     website: 'https://www.nudge.com',
   },
@@ -172,34 +169,30 @@ export const companies: Company[] = [
     founderCeo: 'Alex Blania, Sam Altman',
     focus: 'Non-implantable ultrasound BCI for thought-to-text and clinical neuromodulation',
     stage: 'research',
-    founded: '2025',
     raised: '$252M',
-    website: 'https://www.mergelabs.com',
+    website: 'https://merge.io/blog',
   },
   {
     name: 'Forest Neurotech',
     founderCeo: 'Sumner Norman, Tyson Aflalo',
     focus: 'Ultrasound-on-chip for brain imaging and neuromodulation',
     stage: 'research',
-    founded: '2023',
     raised: '$14M',
     website: 'https://forestneurotech.org',
   },
   {
     name: 'SPIRE',
     founderCeo: 'Jan Kubanek, Tom Riis',
-    focus: 'DIADEM — LIFU device for treatment-resistant depression and chronic pain',
+    focus: 'DIADEM LIFU device for treatment-resistant depression and chronic pain',
     stage: 'clinical',
-    founded: '—',
     raised: 'Undisclosed',
-    website: 'https://www.fusfoundation.org/posts/company-profile-spire',
+    website: 'https://spire.us',
   },
   {
     name: 'Prophetic',
     founderCeo: 'Eric Wollberg, Wesley Berry',
-    focus: 'Halo — tFUS + EEG headband for lucid dreaming induction',
+    focus: 'Halo tFUS + EEG headband for lucid dreaming induction',
     stage: 'consumer',
-    founded: '2023',
     raised: '$3.4M',
     website: 'https://www.prophetic.com',
   },
@@ -208,17 +201,15 @@ export const companies: Company[] = [
     founderCeo: 'Phoenix Peng, Tianqiao Chen',
     focus: 'Ultrasound BCI for depression, chronic pain, PTSD, stroke rehab',
     stage: 'pre-clinical',
-    founded: '2025',
     raised: '$21.6M',
     website: 'https://www.gestala.com',
   },
   {
-    name: 'Neurosona',
-    founderCeo: 'Seung-Schik Yoo',
-    focus: 'LIFU device for depression, Alzheimer\'s, neuropathic pain',
-    stage: 'clinical',
-    founded: '2016',
-    raised: 'Undisclosed',
-    website: 'https://neurosona.com',
+    name: 'Sanmai',
+    founderCeo: 'Jay Sanguinetti',
+    focus: 'AI-guided focused ultrasound headset for mental health treatment',
+    stage: 'pre-clinical',
+    raised: '$25M',
+    website: 'https://sanmai.tech',
   },
 ]

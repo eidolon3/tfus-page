@@ -1,130 +1,123 @@
-import PageWrapper from '../components/ui/PageWrapper'
 import { motion } from 'framer-motion'
 
 export default function About() {
   return (
-    <PageWrapper
-      title="About"
-      subtitle="Why I built this site and where I'm headed."
-      accentColor="#00FFFF"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen w-full"
+      style={{ paddingTop: '7rem', paddingBottom: '4rem' }}
     >
-      <div className="max-w-2xl space-y-8">
+      <div style={{ maxWidth: '42rem', margin: '0 auto', padding: '0 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="space-y-4"
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <p className="text-sm text-white/60 leading-relaxed">
-            I'm an undergraduate fascinated by the intersection of acoustics, neuroscience,
-            and engineering. Transcranial focused ultrasound represents one of the most
-            promising frontiers in non-invasive neuromodulation — a technology that could
-            fundamentally change how we treat neurological and psychiatric disorders.
-          </p>
-          <p className="text-sm text-white/60 leading-relaxed">
-            This website is a curated knowledge base I built to organize my own research
-            into the tFUS landscape: the key labs driving the field, the landmark studies
-            that shaped our understanding, the technology that makes it possible, and the
-            open questions that remain.
-          </p>
-          <p className="text-sm text-white/60 leading-relaxed">
-            The interactive landing page simulates beam steering through a stylized brain
-            cross-section — because I believe the best way to understand focused ultrasound
-            is to see it in action.
+          <div style={{ width: '4rem', height: 1, background: '#00FFFF', opacity: 0.5, marginBottom: '1rem' }} />
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 300, color: 'rgba(255,255,255,0.9)', marginBottom: '0.75rem' }}>
+            About
+          </h1>
+          <p className="font-mono" style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
+            Why I built this site and where I'm headed.
           </p>
         </motion.div>
 
-        {/* Divider */}
-        <div className="h-px bg-white/5" />
+        {/* Bio */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+        >
+          <p style={{ fontSize: '0.875rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.6)' }}>
+            I'm Samir Mohammad, an undergraduate Electrical Engineering student at the University
+            of Illinois. For almost two years, I have been fascinated by transcranial focused
+            ultrasound: a technology that exists at the intersection of my interests in
+            neuroscience, hardware, and machine learning.
+          </p>
+          <p style={{ fontSize: '0.875rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.6)' }}>
+            This website is a curated knowledge base I built to organize my own research into
+            the tFUS landscape. The feature I'm most proud of is the inclusion of a database
+            that contains 250+ tFUS studies, with key findings and ultrasonic parameters attached.
+            The website also includes a catalog of every tFUS clinical trial in existence, a list
+            of key organizations driving the field, and a timeline of the landmark studies that
+            shaped our understanding.
+          </p>
+        </motion.div>
 
-        {/* What I'm looking for */}
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.05)' }} />
+
+        {/* tFUS progress */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h2 className="font-mono text-xs tracking-[0.15em] uppercase text-[#00FFFF]/60 mb-4">
-            What I'm looking for
+          <h2 className="font-mono" style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(0,255,255,0.6)', marginBottom: '0.625rem' }}>
+            tFUS progress I'd like to be a part of
           </h2>
-          <div className="space-y-3">
+          <div style={{ display: 'inline-flex', flexDirection: 'column', gap: '0.75rem', textAlign: 'left' }}>
             {[
-              'Research lab positions in focused ultrasound or neuromodulation',
-              'Computational modeling of acoustic wave propagation',
-              'Hardware/software for real-time beam steering systems',
-              'Intersection of FUS with neuroimaging and closed-loop systems',
+              'Next-gen hardware: phased arrays, transducer miniaturization, real-time beam steering',
+              'Peripheral neuromodulation: targeting DRG, vestibular nerve, and beyond',
+              'Wearable tFUS devices for consumer applications',
+              'tFUS research for intractable psychiatric conditions',
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <span className="text-[#BF40BF] font-mono text-[10px] mt-0.5 shrink-0">
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <span className="font-mono" style={{ color: '#BF40BF', fontSize: '10px', marginTop: 2, flexShrink: 0 }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="text-sm text-white/50">{item}</span>
+                <span style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>{item}</span>
               </div>
             ))}
           </div>
         </motion.div>
 
-        {/* Divider */}
-        <div className="h-px bg-white/5" />
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.05)' }} />
 
         {/* Contact */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
         >
-          <h2 className="font-mono text-xs tracking-[0.15em] uppercase text-[#00FFFF]/60 mb-4">
+          <h2 className="font-mono" style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(0,255,255,0.6)', marginBottom: '0.625rem' }}>
             Get in touch
           </h2>
-          <p className="text-sm text-white/40">
-            If you're working on tFUS and looking for a motivated collaborator, I'd love to hear from you.
+          <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.625rem' }}>
+            If you're working on tFUS and/or looking for a motivated collaborator, I'd love to hear from you.
           </p>
-          <div className="mt-4 flex gap-4">
+          <div style={{ display: 'flex', gap: '1rem' }}>
             <a
-              href="mailto:your-email@university.edu"
-              className="font-mono text-[10px] tracking-[0.15em] uppercase px-4 py-2
-                border border-[#BF40BF]/30 text-[#BF40BF]/70 rounded
-                hover:border-[#BF40BF]/60 hover:text-[#BF40BF] hover:bg-[#BF40BF]/5
-                transition-all"
+              href="mailto:smoha95@illinois.edu"
+              className="font-mono"
+              style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.5rem 1rem', border: '1px solid rgba(191,64,191,0.3)', color: 'rgba(191,64,191,0.7)', borderRadius: '0.25rem', textDecoration: 'none', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(191,64,191,0.6)'; e.currentTarget.style.color = '#BF40BF'; e.currentTarget.style.background = 'rgba(191,64,191,0.05)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(191,64,191,0.3)'; e.currentTarget.style.color = 'rgba(191,64,191,0.7)'; e.currentTarget.style.background = 'transparent' }}
             >
               Email
             </a>
             <a
-              href="https://github.com"
+              href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[10px] tracking-[0.15em] uppercase px-4 py-2
-                border border-white/10 text-white/40 rounded
-                hover:border-white/20 hover:text-white/60
-                transition-all"
+              className="font-mono"
+              style={{ fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.5rem 1rem', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)', borderRadius: '0.25rem', textDecoration: 'none', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'rgba(255,255,255,0.4)' }}
             >
-              GitHub
+              Resume
             </a>
           </div>
         </motion.div>
 
-        {/* Tech stack */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="pt-4"
-        >
-          <h2 className="font-mono text-xs tracking-[0.15em] uppercase text-white/20 mb-3">
-            Built with
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {['React', 'Three.js', 'R3F', 'Framer Motion', 'Tailwind CSS', 'TypeScript'].map(tech => (
-              <span
-                key={tech}
-                className="font-mono text-[9px] tracking-wider uppercase px-2 py-1
-                  border border-white/5 text-white/20 rounded"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </motion.div>
+
       </div>
-    </PageWrapper>
+    </motion.div>
   )
 }
