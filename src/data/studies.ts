@@ -1337,7 +1337,7 @@ export const studies: Study[] = [
     studyType: "human",
     firstAuthor: "Legon",
     species: "human",
-    n: 20,
+    n: 40,
     targetRegion: "unilateral sensory thalamus (VPL nucleus)",
     controlType: "sham",
     frequency_kHz: 500.0,

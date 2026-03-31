@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
+import { Analytics } from '@vercel/analytics/react'
 import Layout from './components/layout/Layout'
 import MockupTextStack from './pages/MockupTextStack'
 
@@ -27,6 +28,7 @@ function App() {
           </Routes>
         </Suspense>
       </AnimatePresence>
+      <Analytics />
     </BrowserRouter>
   )
 }
