@@ -12,13 +12,6 @@ const speciesColor = (species: string) => {
   return 'text-blue-400'
 }
 
-const effectColor = (effect: string) => {
-  const e = effect?.toLowerCase()
-  if (e === 'excitatory') return 'text-amber-400'
-  if (e === 'inhibitory') return 'text-blue-400'
-  if (e === 'mixed') return 'text-purple-400'
-  return 'text-white/30'
-}
 
 function USParamsCell({ study }: { study: Study }) {
   const rows: [string, string][] = [
@@ -221,9 +214,7 @@ export default function Studies() {
                 onClick={() => setEffectFilter(t)}
                 className={`font-mono text-[9px] px-2 py-1 rounded border transition-colors ${
                   effectFilter === t
-                    ? t === 'excitatory' ? 'border-amber-400/50 text-amber-400 bg-amber-400/10'
-                    : t === 'inhibitory' ? 'border-blue-400/50 text-blue-400 bg-blue-400/10'
-                    : 'border-[#BF40BF]/50 text-[#BF40BF] bg-[#BF40BF]/10'
+                    ? 'border-[#BF40BF]/50 text-[#BF40BF] bg-[#BF40BF]/10'
                     : 'border-white/10 text-white/30 hover:text-white/50'
                 }`}
               >
@@ -296,7 +287,7 @@ export default function Studies() {
                 <td className="px-3 py-3 font-mono text-xs text-white/40 group-hover:text-white/60 w-12">
                   {study.n ?? '—'}
                 </td>
-                <td className={`px-3 py-3 text-xs whitespace-nowrap ${effectColor(study.excitatoryInhibitory)}`}>
+                <td className="px-3 py-3 text-xs text-white/60 whitespace-nowrap">
                   {study.excitatoryInhibitory || '—'}
                 </td>
                 <td className="px-3 py-3 text-[11px] text-white/40 group-hover:text-white/60 max-w-[260px]">
