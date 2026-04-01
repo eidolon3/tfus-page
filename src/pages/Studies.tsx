@@ -12,6 +12,14 @@ const speciesColor = (species: string) => {
   return 'text-blue-400'
 }
 
+const effectColor = (effect: string) => {
+  const e = effect?.toLowerCase()
+  if (e === 'excitatory') return 'text-amber-400'
+  if (e === 'inhibitory') return 'text-blue-400'
+  if (e === 'mixed') return 'text-purple-400'
+  return 'text-white/30'
+}
+
 function USParamsCell({ study }: { study: Study }) {
   const rows: [string, string][] = [
     ['freq', study.frequency_kHz != null ? `${study.frequency_kHz} kHz` : '—'],
@@ -62,6 +70,7 @@ export default function Studies() {
   const [sortKey, setSortKey] = useState<SortKey>('significance')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
   const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [effectFilter, setEffectFilter] = useState<string>('all')
   const [methOpen, setMethOpen] = useState(false)
   const tbodyRef = useRef<HTMLTableSectionElement>(null)
 
@@ -72,6 +81,10 @@ export default function Studies() {
 
     if (typeFilter !== 'all') {
       result = result.filter(s => s.studyType === typeFilter)
+    }
+
+    if (effectFilter !== 'all') {
+      result = result.filter(s => s.excitatoryInhibitory?.toLowerCase() === effectFilter)
     }
 
     if (search.trim()) {
@@ -92,7 +105,7 @@ export default function Studies() {
     })
 
     return result
-  }, [search, sortKey, sortDir, typeFilter])
+  }, [search, sortKey, sortDir, typeFilter, effectFilter])
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -200,6 +213,25 @@ export default function Studies() {
             ))}
           </div>
 
+          {/* Effect filter pills */}
+          <div className="flex gap-1">
+            {['all', 'excitatory', 'inhibitory'].map(t => (
+              <button
+                key={t}
+                onClick={() => setEffectFilter(t)}
+                className={`font-mono text-[9px] px-2 py-1 rounded border transition-colors ${
+                  effectFilter === t
+                    ? t === 'excitatory' ? 'border-amber-400/50 text-amber-400 bg-amber-400/10'
+                    : t === 'inhibitory' ? 'border-blue-400/50 text-blue-400 bg-blue-400/10'
+                    : 'border-[#BF40BF]/50 text-[#BF40BF] bg-[#BF40BF]/10'
+                    : 'border-white/10 text-white/30 hover:text-white/50'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
           {/* Search */}
           <div className="relative">
             <input
@@ -230,6 +262,7 @@ export default function Studies() {
               </th>
               <SortTh label="Read-Out" colKey="readOut" />
               <SortTh label="N" colKey="n" className="w-12" />
+              <SortTh label="Effect" colKey="excitatoryInhibitory" />
               <th className="px-3 py-3 font-mono text-[9px] tracking-[0.15em] uppercase text-white/30">
                 Key Findings
               </th>
@@ -262,6 +295,9 @@ export default function Studies() {
                 </td>
                 <td className="px-3 py-3 font-mono text-xs text-white/40 group-hover:text-white/60 w-12">
                   {study.n ?? '—'}
+                </td>
+                <td className={`px-3 py-3 text-xs whitespace-nowrap ${effectColor(study.excitatoryInhibitory)}`}>
+                  {study.excitatoryInhibitory || '—'}
                 </td>
                 <td className="px-3 py-3 text-[11px] text-white/40 group-hover:text-white/60 max-w-[260px]">
                   <span className="line-clamp-3">{study.keyFindings}</span>
